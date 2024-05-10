@@ -2,13 +2,150 @@
 {
     static void Main(string[] args)
     {
-        List<VirtualProcess> processes = new() { new(0, 10) };
-        // FCFSScheduler.CalcFinishTime(processes);
-        RoundRobinScheduler.ExecuteRoundRobin(processes, 2);
-        foreach (var item in processes)
+        int[] availableResources = new int[] { 3, 3, 2 };
+        int[,] maximumResourcesCanBeAllocated = new int[,]
         {
-            Console.WriteLine(item.FinishTime);
+            { 7, 5, 3 },
+            { 3, 2, 2 },
+            { 9, 0, 2 },
+            { 2, 2, 2 },
+            { 4, 3, 3 }
+        };
+        int[,] allocationResources = new int[,]
+        {
+            { 0, 1, 0 },
+            { 2, 0, 0 },
+            { 3, 0, 2 },
+            { 2, 1, 1 },
+            { 0, 0, 2 }
+        };
+
+        BankersAlgorithm bankersAlgorithm = new BankersAlgorithm(
+            5,
+            3,
+            availableResources,
+            maximumResourcesCanBeAllocated,
+            allocationResources
+        );
+
+        if (bankersAlgorithm.IsSafeState(out List<int> safeSequence))
+        {
+            Console.WriteLine(
+                $"system is save state with sequance: {string.Join(" => ", safeSequence)} "
+            );
         }
+        else
+        {
+            Console.WriteLine(
+                $"system is not save with sequance and save sequance: {string.Join(" => ", safeSequence)} "
+            );
+        }
+    }
+}
+
+class BankersAlgorithm
+{
+    // Number of processes
+    int _numberOfProcesses = 5;
+
+    // Number of resources
+    int _numberOfResources = 3;
+
+    // Available resources
+    int[] _availableResources;
+
+    // Maximum resources that can be allocated to processes
+    int[,] _maximumResourcesCanBeAllocated;
+
+    // Resources currently allocated to processes
+    int[,] _allocationResources;
+
+    // Remaining needs of processes
+    int[,] _need;
+
+    public BankersAlgorithm(
+        int numberOfProcesses,
+        int numberOfResources,
+        int[] availableResources,
+        int[,] maximumResourcesCanBeAllocated,
+        int[,] allocationResources
+    )
+    {
+        _numberOfProcesses = numberOfProcesses;
+        _numberOfResources = numberOfResources;
+        _availableResources = availableResources;
+        _maximumResourcesCanBeAllocated = maximumResourcesCanBeAllocated;
+        _allocationResources = allocationResources;
+        _need = new int[_numberOfProcesses, _numberOfResources];
+
+        // Calculate remaining needs of processes
+        for (int i = 0; i < _numberOfProcesses; i++)
+        {
+            for (int j = 0; j < numberOfResources; j++)
+            {
+                _need[i, j] = maximumResourcesCanBeAllocated[i, j] - allocationResources[i, j];
+            }
+        }
+    }
+
+    public bool IsSafeState(out List<int> safeSequence)
+    {
+        safeSequence = new List<int>();
+        int[] work = new int[_numberOfResources];
+        int[] finish = new int[_numberOfProcesses];
+
+        // Initialize work and finish arrays
+        for (int i = 0; i < _numberOfResources; i++)
+        {
+            work[i] = _availableResources[i];
+        }
+
+        for (int i = 0; i < _numberOfProcesses; i++)
+        {
+            finish[i] = 0;
+        }
+
+        int count = 0;
+        while (count < _numberOfProcesses)
+        {
+            bool found = false;
+            for (int i = 0; i < _numberOfProcesses; i++)
+            {
+                if (finish[i] == 0)
+                {
+                    int j;
+                    for (j = 0; j < _numberOfResources; j++)
+                    {
+                        if (_need[i, j] > work[j])
+                        {
+                            break;
+                        }
+                    }
+
+                    if (j == _numberOfResources)
+                    {
+                        // Process can be allocated resources
+                        for (int k = 0; k < _numberOfResources; k++)
+                        {
+                            work[k] += _allocationResources[i, k];
+                        }
+
+                        finish[i] = 1;
+                        found = true;
+                        count++;
+                        safeSequence.Add(i);
+                    }
+                }
+            }
+
+            // If no process could be allocated resources, the system is in an unsafe state
+            if (!found)
+            {
+                return false;
+            }
+        }
+
+        return true;
     }
 }
 
