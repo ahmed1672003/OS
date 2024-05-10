@@ -41,7 +41,7 @@
     }
 }
 
-class BankersAlgorithm
+public class BankersAlgorithm
 {
     // Available resources
     int[] _availableResources;
