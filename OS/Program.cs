@@ -64,10 +64,10 @@ public class BankersAlgorithm
         _availableResources = availableResources;
         _maximumResourcesCanBeAllocated = maximumResourcesCanBeAllocated;
         _allocationResources = allocationResources;
-        _need = new int[allocationResources.GetLength(1), _availableResources.Length];
+        _need = new int[allocationResources.GetLength(0), _availableResources.Length];
 
         // Calculate remaining needs of processes
-        for (int i = 0; i < _allocationResources.GetLength(1); i++)
+        for (int i = 0; i < _allocationResources.GetLength(0); i++)
         {
             for (int j = 0; j < _availableResources.Length; j++)
             {
@@ -80,7 +80,7 @@ public class BankersAlgorithm
     {
         safeSequence = new List<int>();
         int[] work = new int[_availableResources.Length];
-        int[] finish = new int[_allocationResources.GetLength(1)];
+        int[] finish = new int[_allocationResources.GetLength(0)];
 
         // Initialize work and finish arrays
         for (int i = 0; i < _availableResources.Length; i++)
@@ -88,16 +88,16 @@ public class BankersAlgorithm
             work[i] = _availableResources[i];
         }
 
-        for (int i = 0; i < _allocationResources.GetLength(1); i++)
+        for (int i = 0; i < _allocationResources.GetLength(0); i++)
         {
             finish[i] = 0;
         }
 
         int count = 0;
-        while (count < _allocationResources.GetLength(1))
+        while (count < _allocationResources.GetLength(0))
         {
             bool found = false;
-            for (int i = 0; i < _allocationResources.GetLength(1); i++)
+            for (int i = 0; i < _allocationResources.GetLength(0); i++)
             {
                 if (finish[i] == 0)
                 {
