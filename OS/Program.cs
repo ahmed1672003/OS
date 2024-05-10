@@ -80,18 +80,11 @@ public class BankersAlgorithm
     {
         safeSequence = new List<int>();
         int[] work = new int[_availableResources.Length];
+
         int[] finish = new int[_allocationResources.GetLength(0)];
 
         // Initialize work and finish arrays
-        for (int i = 0; i < _availableResources.Length; i++)
-        {
-            work[i] = _availableResources[i];
-        }
-
-        for (int i = 0; i < _allocationResources.GetLength(0); i++)
-        {
-            finish[i] = 0;
-        }
+        _availableResources.CopyTo(work, 0);
 
         int count = 0;
         while (count < _allocationResources.GetLength(0))
