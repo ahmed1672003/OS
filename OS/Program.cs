@@ -21,8 +21,6 @@
         };
 
         BankersAlgorithm bankersAlgorithm = new BankersAlgorithm(
-            5,
-            3,
             availableResources,
             maximumResourcesCanBeAllocated,
             allocationResources
@@ -45,12 +43,6 @@
 
 class BankersAlgorithm
 {
-    // Number of processes
-    int _numberOfProcesses = 5;
-
-    // Number of resources
-    int _numberOfResources = 3;
-
     // Available resources
     int[] _availableResources;
 
@@ -64,24 +56,20 @@ class BankersAlgorithm
     int[,] _need;
 
     public BankersAlgorithm(
-        int numberOfProcesses,
-        int numberOfResources,
         int[] availableResources,
         int[,] maximumResourcesCanBeAllocated,
         int[,] allocationResources
     )
     {
-        _numberOfProcesses = numberOfProcesses;
-        _numberOfResources = numberOfResources;
         _availableResources = availableResources;
         _maximumResourcesCanBeAllocated = maximumResourcesCanBeAllocated;
         _allocationResources = allocationResources;
-        _need = new int[_numberOfProcesses, _numberOfResources];
+        _need = new int[allocationResources.GetLength(1), _availableResources.Length];
 
         // Calculate remaining needs of processes
-        for (int i = 0; i < _numberOfProcesses; i++)
+        for (int i = 0; i < _allocationResources.GetLength(1); i++)
         {
-            for (int j = 0; j < numberOfResources; j++)
+            for (int j = 0; j < _availableResources.Length; j++)
             {
                 _need[i, j] = maximumResourcesCanBeAllocated[i, j] - allocationResources[i, j];
             }
@@ -91,30 +79,30 @@ class BankersAlgorithm
     public bool IsSafeState(out List<int> safeSequence)
     {
         safeSequence = new List<int>();
-        int[] work = new int[_numberOfResources];
-        int[] finish = new int[_numberOfProcesses];
+        int[] work = new int[_availableResources.Length];
+        int[] finish = new int[_allocationResources.GetLength(1)];
 
         // Initialize work and finish arrays
-        for (int i = 0; i < _numberOfResources; i++)
+        for (int i = 0; i < _availableResources.Length; i++)
         {
             work[i] = _availableResources[i];
         }
 
-        for (int i = 0; i < _numberOfProcesses; i++)
+        for (int i = 0; i < _allocationResources.GetLength(1); i++)
         {
             finish[i] = 0;
         }
 
         int count = 0;
-        while (count < _numberOfProcesses)
+        while (count < _allocationResources.GetLength(1))
         {
             bool found = false;
-            for (int i = 0; i < _numberOfProcesses; i++)
+            for (int i = 0; i < _allocationResources.GetLength(1); i++)
             {
                 if (finish[i] == 0)
                 {
                     int j;
-                    for (j = 0; j < _numberOfResources; j++)
+                    for (j = 0; j < _availableResources.Length; j++)
                     {
                         if (_need[i, j] > work[j])
                         {
@@ -122,10 +110,10 @@ class BankersAlgorithm
                         }
                     }
 
-                    if (j == _numberOfResources)
+                    if (j == _availableResources.Length)
                     {
                         // Process can be allocated resources
-                        for (int k = 0; k < _numberOfResources; k++)
+                        for (int k = 0; k < _availableResources.Length; k++)
                         {
                             work[k] += _allocationResources[i, k];
                         }
