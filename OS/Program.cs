@@ -1,43 +1,56 @@
-﻿internal class Program
+﻿using OS;
+
+internal class Program
 {
     static void Main(string[] args)
     {
-        int[] availableResources = new int[] { 3, 3, 2 };
-        int[,] maximumResourcesCanBeAllocated = new int[,]
-        {
-            { 7, 5, 3 },
-            { 3, 2, 2 },
-            { 9, 0, 2 },
-            { 2, 2, 2 },
-            { 4, 3, 3 }
-        };
-        int[,] allocationResources = new int[,]
-        {
-            { 0, 1, 0 },
-            { 2, 0, 0 },
-            { 3, 0, 2 },
-            { 2, 1, 1 },
-            { 0, 0, 2 }
-        };
+        MemoryManagement memoryManagement =
+            new(new() { 100, 500, 200, 300, 600 }, new() { 212, 417, 112, 426 });
+        //  memoryManagement.FirstFit();
+        // memoryManagement.BestFit();
+        memoryManagement.WorstFit();
+        //Fork fork = new();
+        //new Philosopher(0, 50, 4, fork);
+        //new Philosopher(1, 30, 3, fork);
+        //new Philosopher(2, 40, 5, fork);
+        //new Philosopher(3, 60, 10, fork);
+        //new Philosopher(4, 70, 10, fork);
+        //int[] availableResources = new int[] { 3, 3, 2 };
+        //int[,] maximumResourcesCanBeAllocated = new int[,]
+        //{
+        //    { 7, 5, 3 },
+        //    { 3, 2, 2 },
+        //    { 9, 0, 2 },
+        //    { 2, 2, 2 },
+        //    { 4, 3, 3 }
+        //};
+        //int[,] allocationResources = new int[,]
+        //{
+        //    { 0, 1, 0 },
+        //    { 2, 0, 0 },
+        //    { 3, 0, 2 },
+        //    { 2, 1, 1 },
+        //    { 0, 0, 2 }
+        //};
 
-        BankersAlgorithm bankersAlgorithm = new BankersAlgorithm(
-            availableResources,
-            maximumResourcesCanBeAllocated,
-            allocationResources
-        );
+        //BankersAlgorithm bankersAlgorithm = new BankersAlgorithm(
+        //    availableResources,
+        //    maximumResourcesCanBeAllocated,
+        //    allocationResources
+        //);
 
-        if (bankersAlgorithm.IsSafeState(out List<int> safeSequence))
-        {
-            Console.WriteLine(
-                $"system is save state with sequance: {string.Join(" => ", safeSequence)} "
-            );
-        }
-        else
-        {
-            Console.WriteLine(
-                $"system is not save with sequance and save sequance: {string.Join(" => ", safeSequence)} "
-            );
-        }
+        //if (bankersAlgorithm.IsSafeState(out List<int> safeSequence))
+        //{
+        //    Console.WriteLine(
+        //        $"system is save state with sequance: {string.Join(" => ", safeSequence)} "
+        //    );
+        //}
+        //else
+        //{
+        //    Console.WriteLine(
+        //        $"system is not save with sequance and save sequance: {string.Join(" => ", safeSequence)} "
+        //    );
+        //}
     }
 }
 
@@ -146,7 +159,7 @@ public class FCFSScheduler
     {
         processes.ForEach(process =>
         {
-            process.ArrivalTime = process.FinishTime - process.ArrivalTime;
+            process.TurnAroundTime = process.FinishTime - process.ArrivalTime;
         });
     }
 
